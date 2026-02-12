@@ -1,25 +1,6 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-    <!-- Header -->
-    <header class="bg-white shadow-sm border-b border-gray-200">
-      <div class="container mx-auto px-4 py-4">
-        <div class="flex items-center justify-between">
-          <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
-          <div class="flex items-center gap-4">
-            <ClientOnly>
-              <BaseButton
-                v-if="isAuthenticated"
-                @click="handleLogout"
-                :loading="loading"
-                variant="secondary"
-              >
-                Sair
-              </BaseButton>
-            </ClientOnly>
-          </div>
-        </div>
-      </div>
-    </header>
+    <AppHeader show-nav-links />
 
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-8">
@@ -149,20 +130,5 @@
 </template>
 
 <script setup lang="ts">
-import { BaseButton } from '#components'
-import { useAuth } from '~/composables/useAuth'
-import { navigateTo } from '#imports'
-
-const { logout, isAuthenticated, loading } = useAuth()
-
-const handleLogout = async () => {
-  const { error } = await logout()
-  
-  if (error) {
-    console.error('Erro ao fazer logout:', error)
-    return
-  }
-  
-  await navigateTo('/login', { replace: true })
-}
+// Dashboard - header e auth gerenciados pelo AppHeader
 </script>

@@ -10,10 +10,12 @@ export default defineNuxtConfig({
       exclude: [
         '/',
         '/login',
+        '/criar-conta',
         '/docs',
         '/recuperar-senha',
         '/confirm',
         '/callback',
+        '/resetPasswordForEmail',
       ],
     },
   },

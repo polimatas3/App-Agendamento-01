@@ -1,41 +1,6 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-    <!-- Header com gradiente -->
-    <header class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white shadow-lg">
-      <div class="container mx-auto px-4 py-6">
-        <div class="flex items-center justify-between">
-          <h1 class="text-2xl font-bold">AppAgendamento</h1>
-          <ClientOnly>
-            <div class="flex items-center gap-3">
-              <NuxtLink
-                v-if="!isAuthenticated"
-                to="/login"
-                class="bg-white text-blue-600 px-4 py-2 rounded-lg font-semibold hover:bg-blue-50 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
-              >
-                Login
-              </NuxtLink>
-              <BaseButton
-                v-else
-                @click="handleLogout"
-                :loading="loading"
-                variant="secondary"
-                class="bg-white text-blue-600 hover:bg-blue-50"
-              >
-                Sair
-              </BaseButton>
-            </div>
-            <template #fallback>
-              <NuxtLink
-                to="/login"
-                class="bg-white text-blue-600 px-4 py-2 rounded-lg font-semibold hover:bg-blue-50 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
-              >
-                Login
-              </NuxtLink>
-            </template>
-          </ClientOnly>
-        </div>
-      </div>
-    </header>
+    <AppHeader />
 
     <!-- Hero Section -->
     <main class="container mx-auto px-4 py-12">
@@ -159,21 +124,5 @@
 </template>
 
 <script setup lang="ts">
-import { BaseButton } from '#components'
-import { useAuth } from '~/composables/useAuth'
-import { navigateTo } from '#imports'
-
-const { logout, isAuthenticated, loading } = useAuth()
-
-const handleLogout = async () => {
-  const { error } = await logout()
-  
-  if (error) {
-    console.error('Erro ao fazer logout:', error)
-    return
-  }
-  
-  // Redireciona para a página de login após logout
-  await navigateTo('/login', { replace: true })
-}
+// Página inicial - header e auth gerenciados pelo AppHeader
 </script>

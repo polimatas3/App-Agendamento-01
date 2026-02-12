@@ -7,32 +7,40 @@
           <!-- Header -->
           <div class="text-center mb-8">
             <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
-              Recuperar senha
+              Redefinir senha
             </h1>
             <p class="text-gray-600">
-              Digite seu email para receber o link de redefinição de senha
+              Digite sua nova senha de acesso
             </p>
           </div>
 
-          <!-- Formulário -->
+          <!-- Formulário de troca de senha -->
           <form class="space-y-6" @submit.prevent="onSubmit">
-            <BaseInput
-              v-model="email"
-              label="Email"
-              name="email"
-              type="email"
-              placeholder="seu@email.com"
+            <InputPassword
+              v-model="form.newPassword"
+              label="Nova senha"
+              name="new-password"
+              placeholder="••••••••"
               required
-              autocomplete="email"
+              autocomplete="new-password"
+            />
+
+            <InputPassword
+              v-model="form.confirmPassword"
+              label="Confirmar nova senha"
+              name="confirm-new-password"
+              placeholder="••••••••"
+              required
+              autocomplete="new-password"
             />
 
             <BaseButton type="submit" class="w-full" :loading="loading">
-              Enviar link de recuperação
+              Salvar nova senha
             </BaseButton>
           </form>
 
           <!-- Link para voltar -->
-          <div class="mt-6 text-center">
+          <div class="text-center mt-6">
             <NuxtLink
               to="/login"
               class="text-blue-600 hover:text-blue-700 font-medium text-sm"
@@ -57,13 +65,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { BaseButton, BaseInput, AlertModal } from '#components'
+import { reactive, ref } from 'vue'
+import { BaseButton, InputPassword, AlertModal } from '#components'
 import { useAuth } from '~/composables/useAuth'
 
-const { resetPasswordForEmail, loading, error } = useAuth()
+const { updatePassword, loading, error } = useAuth()
 
-const email = ref('')
+const form = reactive({
+  newPassword: '',
+  confirmPassword: '',
+})
 
 const showFeedbackModal = ref(false)
 const feedbackType = ref<'success' | 'error'>('success')
@@ -78,22 +89,25 @@ const showFeedback = (type: 'success' | 'error', title: string, message: string)
 }
 
 const onSubmit = async () => {
-  const { error: resetError } = await resetPasswordForEmail({ email: email.value })
-
-  if (resetError) {
-    showFeedback(
-      'error',
-      'Erro ao enviar',
-      error.value ?? 'Ocorreu um erro ao enviar o email. Tente novamente.'
-    )
+  if (form.newPassword !== form.confirmPassword) {
+    showFeedback('error', 'Senhas não coincidem', 'A nova senha e a confirmação devem ser iguais.')
     return
   }
 
-  showFeedback(
-    'success',
-    'Verifique seu email',
-    'Enviamos um link de recuperação para o seu email. Verifique sua caixa de entrada e a pasta de spam.'
-  )
-  email.value = ''
+  if (form.newPassword.length < 6) {
+    showFeedback('error', 'Senha muito curta', 'A senha deve ter pelo menos 6 caracteres.')
+    return
+  }
+
+  const { error: updateError } = await updatePassword({ newPassword: form.newPassword })
+
+  if (updateError) {
+    showFeedback('error', 'Erro ao alterar senha', error.value ?? 'Ocorreu um erro. Tente novamente.')
+    return
+  }
+
+  showFeedback('success', 'Senha alterada', 'Sua senha foi alterada com sucesso.')
+  form.newPassword = ''
+  form.confirmPassword = ''
 }
 </script>
